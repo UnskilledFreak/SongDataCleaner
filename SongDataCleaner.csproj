@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{3F5A624D-E3B9-4FCB-98B3-16875CC16B6C}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>SongDataCleaner</RootNamespace>
+        <AssemblyName>SongDataCleaner</AssemblyName>
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="Accessibility, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\Accessibility.dll</HintPath>
+        </Reference>
+        <Reference Include="BS_Utils, Version=1.4.11.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Plugins\BS_Utils.dll</HintPath>
+        </Reference>
+        <Reference Include="IPA.Loader, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
+        </Reference>
+        <Reference Include="Main, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\Main.dll</HintPath>
+        </Reference>
+        <Reference Include="SongCore, Version=2.9.11.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Plugins\SongCore.dll</HintPath>
+        </Reference>
+        <Reference Include="System" />
+        <Reference Include="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Data.dll</HintPath>
+        </Reference>
+        <Reference Include="System.IO.Compression, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.IO.Compression.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Net.Http.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Runtime.Serialization.Xml, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Runtime.Serialization.Xml.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Windows.Forms.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Xml.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Plugin.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="manifest.json" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+
+</Project>

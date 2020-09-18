@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/beat-saber-modding-group/BSIPA-MetadataFileSchema/master/Schema.json",
+  "author": "UnskilledFreak",
+  "description": "Cleans unwanted files from custom maps",
+  "gameVersion": "1.11.1",
+  "id": "SongDataCleaner",
+  "name": "SongDataCleaner",
+  "version": "1.0.0",
+  "features": [],
+  "dependsOn": {
+    "BS Utils": "^1.4.11",
+    "SongCore": "^2.9.11"
+  }
+}
