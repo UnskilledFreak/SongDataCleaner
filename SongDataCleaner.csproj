@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
     <PropertyGroup>
+        <BeatSaberDir>J:\Steam\steamapps\common\Beat Saber\</BeatSaberDir>
+    </PropertyGroup>
+    <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
         <ProjectGuid>{3F5A624D-E3B9-4FCB-98B3-16875CC16B6C}</ProjectGuid>
@@ -33,63 +36,66 @@
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="Accessibility, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\Accessibility.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\Accessibility.dll</HintPath>
+        </Reference>
+        <Reference Include="BSML, Version=1.3.5.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Plugins\BSML.dll</HintPath>
         </Reference>
         <Reference Include="BS_Utils, Version=1.4.11.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Plugins\BS_Utils.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Plugins\BS_Utils.dll</HintPath>
+        </Reference>
+        <Reference Include="HMLib, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\HMLib.dll</HintPath>
         </Reference>
         <Reference Include="IPA.Loader, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
         </Reference>
         <Reference Include="Main, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\Main.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\Main.dll</HintPath>
         </Reference>
         <Reference Include="SongCore, Version=2.9.11.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Plugins\SongCore.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Plugins\SongCore.dll</HintPath>
         </Reference>
         <Reference Include="System" />
         <Reference Include="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\System.dll</HintPath>
         </Reference>
         <Reference Include="System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Core.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\System.Core.dll</HintPath>
         </Reference>
         <Reference Include="System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Data.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\System.Data.dll</HintPath>
         </Reference>
         <Reference Include="System.IO.Compression, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.IO.Compression.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\System.IO.Compression.dll</HintPath>
         </Reference>
         <Reference Include="System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Net.Http.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\System.Net.Http.dll</HintPath>
         </Reference>
         <Reference Include="System.Runtime.Serialization.Xml, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Runtime.Serialization.Xml.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\System.Runtime.Serialization.Xml.dll</HintPath>
         </Reference>
         <Reference Include="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Windows.Forms.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\System.Windows.Forms.dll</HintPath>
         </Reference>
         <Reference Include="System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\System.Xml.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\System.Xml.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>J:\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+          <HintPath>$(BeatSaberDir)Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Plugin.cs" />
+        <Compile Include="PluginUI.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="SongDataCleaner.cs" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="manifest.json" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-         Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
-    </Target>
     <Target Name="AfterBuild">
+        <Copy SourceFiles="$(OutputPath)\SongDataCleaner.dll" DestinationFolder="$(BeatSaberDir)Plugins" />
     </Target>
-    -->
-
 </Project>

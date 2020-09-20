@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using BS_Utils.Utilities;
 using IPA;
 using SongCore;
+using UnityEngine;
 using IPALogger = IPA.Logging.Logger;
 
 namespace SongDataCleaner
@@ -12,8 +14,11 @@ namespace SongDataCleaner
     [Plugin(RuntimeOptions.SingleStartInit)]
     public class Plugin
     {
-        private static IPALogger Log { get; set; }
-        private static bool _didCompleteRun;
+        internal static IPALogger Log { get; set; }
+        internal static SongDataCleaner _songDataCleaner;
+        internal static string Name => "SongDataCleaner";
+        
+        private static bool _didRun = false;
 
         [Init]
         public void Init(IPALogger logger)
@@ -23,42 +28,51 @@ namespace SongDataCleaner
         }
 
         [OnStart]
-        public void OnApplicationStart()
+        public void OnStart()
         {
             BSEvents.OnLoad();
-            BSEvents.levelSelected += OnLevelSelected;
-            Loader.SongsLoadedEvent += OnSongsLoaded;
+            _songDataCleaner = new GameObject(Name).AddComponent<SongDataCleaner>();
         }
 
+        [OnEnable]
+        public void Enable()
+        {
+            BSEvents.levelSelected += OnLevelSelected;
+            Loader.SongsLoadedEvent += OnSongsLoaded;
+            PluginUI.instance.Setup();
+        }
+
+        [OnDisable]
+        [OnExit]
+        public void Disable()
+        {
+            BSEvents.levelSelected -= OnLevelSelected;
+            Loader.SongsLoadedEvent -= OnSongsLoaded;
+        }
+        
         private void OnLevelSelected(LevelCollectionViewController levelCollectionViewController, IPreviewBeatmapLevel previewBeatmapLevel)
         {
-            CleanLevelData(previewBeatmapLevel as CustomPreviewBeatmapLevel);
+            if (Loader.AreSongsLoading)
+            {
+                return;
+            }
+            
+            _songDataCleaner.Run(new List<CustomPreviewBeatmapLevel>
+            {
+                previewBeatmapLevel as CustomPreviewBeatmapLevel
+            });
         }
+
 
         private void OnSongsLoaded(Loader loader, Dictionary<string, CustomPreviewBeatmapLevel> levelDictionary)
         {
-            Log.Debug("SongCore finished loading, cleaning directories");
-            
-            Parallel.ForEach(levelDictionary, pair => CleanLevelData(pair.Value));
-            
-            if (_didCompleteRun)
+            if (_didRun || Loader.AreSongsLoading)
             {
                 return;
             }
             
-            Loader.Instance.RefreshSongs();
-            _didCompleteRun = true;
-        }
-
-        private void CleanLevelData(CustomPreviewBeatmapLevel level)
-        {
-            if (level == null)
-            {
-                Log.Warn("level is null");
-                return;
-            }
-
-            Log.Debug($"Cleaning {level.customLevelPath}");
+            Log.Info("SongCore finished loading, cleaning infos");
+            _songDataCleaner.Run(levelDictionary.Values.ToList());
         }
     }
 }
