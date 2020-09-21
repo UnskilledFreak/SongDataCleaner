@@ -53,6 +53,7 @@ namespace SongDataCleaner
 
             
             // bug :: contributors not loaded
+            var levelHash = level.levelID.Replace("custom_level_", "");
             var extraSongData = Collections.RetrieveExtraSongData(level.levelID);
             if (extraSongData == null)
             {
@@ -117,16 +118,15 @@ namespace SongDataCleaner
                 return 0;
             }
 
-            Log.Info("deleting file(s):");
+            //Log.Info("deleting file(s):");
             foreach (var file in unusedFiles)
             {
                 var info = new FileInfo(file);
-                Log.Info($"--> {file}");
-
-                // bug :: deletes images even if flag is set
+                //Log.Info($"--> {file}");
+                
                 if (ignoreImages)
                 {
-                    var extension = info.Extension.ToLowerInvariant();
+                    var extension = info.Extension.Substring(1).ToLowerInvariant();
                     Log.Debug($"extension is {extension}");
                     if (extension == "png" || extension == "jpg" || extension == "jpeg")
                     {
