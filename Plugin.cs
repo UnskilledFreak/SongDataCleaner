@@ -72,6 +72,7 @@ namespace SongDataCleaner
                 return;
             }
 
+            _didRun = true;
             Log.Info("SongCore finished loading, cleaning infos");
             _songDataCleaner.Run(levelDictionary.Values.ToList());
         }
