@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SongCore;
+using SongCore.Data;
 using UnityEngine;
 
 namespace SongDataCleaner
@@ -11,25 +12,56 @@ namespace SongDataCleaner
     public class SongDataCleaner : PersistentSingleton<SongDataCleaner>
     {
         private static IPA.Logging.Logger Log => Plugin.Log;
-        
-        internal static decimal CleanedSize;
 
-        internal void Run(IEnumerable<CustomPreviewBeatmapLevel> levels)
+        internal static string CleanedSize;
+
+        internal void Run(IEnumerable<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
         {
-            StartCoroutine(InternalRun(levels));
+            StartCoroutine(InternalRun(levels, showProgressBar));
         }
 
-        private IEnumerator InternalRun(IEnumerable<CustomPreviewBeatmapLevel> levels)
+        private IEnumerator InternalRun(IEnumerable<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
         {
-            // todo :: is waiting for 5 seconds this even needed?
-            yield return new WaitForSeconds(5f);
             yield return new WaitUntil(() => Loader.AreSongsLoaded);
+
+            try
+            {
+                var size = levels.Sum(CleanLevelData);
+                Log.Info($"cleaned {size} bytes");
+
+                CleanedSize = GetHumanReadableFileSize(size);
+
+                if (showProgressBar)
+                {
+                    PluginUI.instance.ShowProgress();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+        }
+
+        private string GetHumanReadableFileSize(long bytes)
+        {
+            if (bytes == 0)
+            {
+                return "0 B";
+            }
             
-            var size = levels.Sum(CleanLevelData);
+            // we should not exceed more than 1023 MB, wont we?
+            var extensions = new [] {"B", "KB", "MB"};
 
-            CleanedSize = Math.Round((decimal) size / 1024, 2);
+            var factor = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
 
-            PluginUI.instance.ShowProgress();
+            if (factor > 2)
+            {
+                factor = 2;
+            }
+
+            var num = Math.Round(bytes / Math.Pow(1024, factor), 2);
+
+            return Math.Sign(bytes * num) + extensions[factor];
         }
 
         private long CleanLevelData(CustomPreviewBeatmapLevel level)
@@ -41,8 +73,8 @@ namespace SongDataCleaner
             }
 
             var ignoreImages = false;
-
-            //Log.Debug($"Cleaning {level.customLevelPath}");
+            var shortPath = level.customLevelPath.Substring(level.customLevelPath.LastIndexOf("\\") + 1);
+            //Log.Debug($"Cleaning {shortPath}");
 
             var whiteListedFiles = new List<string>
             {
@@ -51,19 +83,19 @@ namespace SongDataCleaner
                 level.standardLevelInfoSaveData.songFilename
             };
 
-            
+
             // bug :: contributors not loaded
             var levelHash = level.levelID.Replace("custom_level_", "");
-            var extraSongData = Collections.RetrieveExtraSongData(level.levelID);
+            var extraSongData = Collections.RetrieveExtraSongData(levelHash);
             if (extraSongData == null)
             {
-                Log.Warn($"could not get extra song data for level {level.levelID} | {level.customLevelPath}");
+                Log.Warn($"could not get extra song data for level {levelHash} - setting ignore image flag | {shortPath}");
                 ignoreImages = true;
             }
             else
             {
                 whiteListedFiles.AddRange(
-                    extraSongData.contributors.Select(contributor => contributor._iconPath)
+                    extraSongData.contributors.Where(contributor => !string.IsNullOrWhiteSpace(contributor._iconPath)).Select(contributor => contributor._iconPath)
                 );
             }
 
@@ -82,7 +114,7 @@ namespace SongDataCleaner
                 return 0;
             }
 
-            Log.Info($"level has possible unused files; ignoreImages = {ignoreImages} | {level.customLevelPath} ");
+            Log.Info($"level has possible unused files; ignoreImages = {ignoreImages} | {shortPath} ");
 
             for (var i = 0; i < whiteListedFiles.Count; i++)
             {
@@ -101,9 +133,8 @@ namespace SongDataCleaner
                 list.AddRange(GetCompleteFileList(dir));
             }
 
-            Directory.GetDirectories(directory);
-
             list.AddRange(Directory.GetFiles(directory).ToList());
+            list.Add(directory);
 
             return list;
         }
@@ -121,9 +152,19 @@ namespace SongDataCleaner
             //Log.Info("deleting file(s):");
             foreach (var file in unusedFiles)
             {
+                if (Directory.Exists(file))
+                {
+                    if (Directory.GetFiles(file).Length == 0 && Directory.GetDirectories(file).Length == 0)
+                    {
+                        Directory.Delete(file);
+                    }
+
+                    continue;
+                }
+
                 var info = new FileInfo(file);
                 //Log.Info($"--> {file}");
-                
+
                 if (ignoreImages)
                 {
                     var extension = info.Extension.Substring(1).ToLowerInvariant();
@@ -136,9 +177,9 @@ namespace SongDataCleaner
                 }
 
                 totalSize += info.Length;
-                File.Delete(file);
+                //File.Delete(file);
             }
-
+            
             return totalSize;
         }
     }

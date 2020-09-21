@@ -32,12 +32,14 @@ namespace SongDataCleaner
             }
             
             yield return new WaitUntil(() => Loader.AreSongsLoaded);
-
-            if (SongDataCleaner.CleanedSize == 0)
+            
+            /*
+            if (SongDataCleaner.CleanedSize == "0 B")
             {
                 Plugin.Log.Info("nothing cleaned, disabled display of progress bar");
                 yield break;
             }
+            */
             
             ShowProgress();
         }

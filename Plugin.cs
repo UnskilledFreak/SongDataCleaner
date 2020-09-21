@@ -61,7 +61,7 @@ namespace SongDataCleaner
             _songDataCleaner.Run(new List<CustomPreviewBeatmapLevel>
             {
                 previewBeatmapLevel as CustomPreviewBeatmapLevel
-            });
+            }, false);
         }
 
 
@@ -72,7 +72,6 @@ namespace SongDataCleaner
                 return;
             }
 
-            _didRun = true;
             Log.Info("SongCore finished loading, cleaning infos");
             _songDataCleaner.Run(levelDictionary.Values.ToList());
         }
