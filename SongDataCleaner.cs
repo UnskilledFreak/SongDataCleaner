@@ -16,12 +16,13 @@ namespace SongDataCleaner
 
         internal void Run(IEnumerable<CustomPreviewBeatmapLevel> levels)
         {
-            Collections.LoadExtraSongData();
             StartCoroutine(InternalRun(levels));
         }
 
         private IEnumerator InternalRun(IEnumerable<CustomPreviewBeatmapLevel> levels)
         {
+            // todo :: is waiting for 5 seconds this even needed?
+            yield return new WaitForSeconds(5f);
             yield return new WaitUntil(() => Loader.AreSongsLoaded);
             
             var size = levels.Sum(CleanLevelData);
@@ -55,6 +56,7 @@ namespace SongDataCleaner
             var extraSongData = Collections.RetrieveExtraSongData(level.levelID);
             if (extraSongData == null)
             {
+                Log.Warn($"could not get extra song data for level {level.levelID} | {level.customLevelPath}");
                 ignoreImages = true;
             }
             else
@@ -125,6 +127,7 @@ namespace SongDataCleaner
                 if (ignoreImages)
                 {
                     var extension = info.Extension.ToLowerInvariant();
+                    Log.Debug($"extension is {extension}");
                     if (extension == "png" || extension == "jpg" || extension == "jpeg")
                     {
                         Log.Warn("----> file is an image but image skip is set");

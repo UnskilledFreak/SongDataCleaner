@@ -14,11 +14,12 @@ namespace SongDataCleaner
     [Plugin(RuntimeOptions.SingleStartInit)]
     public class Plugin
     {
-        internal static IPALogger Log { get; set; }
-        internal static SongDataCleaner _songDataCleaner;
-        internal static string Name => "SongDataCleaner";
+        internal static IPALogger Log { get; private set; }
         
-        private static bool _didRun = false;
+        private static SongDataCleaner _songDataCleaner;
+        private static string Name => "SongDataCleaner";
+        
+        private static bool _didRun;
 
         [Init]
         public void Init(IPALogger logger)
@@ -70,7 +71,8 @@ namespace SongDataCleaner
             {
                 return;
             }
-            
+
+            _didRun = true;
             Log.Info("SongCore finished loading, cleaning infos");
             _songDataCleaner.Run(levelDictionary.Values.ToList());
         }
