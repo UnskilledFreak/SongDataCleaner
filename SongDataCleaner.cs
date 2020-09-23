@@ -13,7 +13,8 @@ namespace SongDataCleaner
     {
         private static IPA.Logging.Logger Log => Plugin.Log;
 
-        internal static string CleanedSize;
+        internal static double CleanedSize;
+        internal static string CleanedUnit;
 
         internal void Run(IEnumerable<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
         {
@@ -24,12 +25,15 @@ namespace SongDataCleaner
         {
             yield return new WaitUntil(() => Loader.AreSongsLoaded);
 
+            CleanedSize = 0;
+            CleanedUnit = "B";
+            
             try
             {
                 var size = levels.Sum(CleanLevelData);
                 Log.Info($"cleaned {size} bytes");
 
-                CleanedSize = GetHumanReadableFileSize(size);
+                SetHumanReadableFileSize(size);
 
                 if (showProgressBar)
                 {
@@ -42,15 +46,17 @@ namespace SongDataCleaner
             }
         }
 
-        private string GetHumanReadableFileSize(long bytes)
+        private void SetHumanReadableFileSize(long bytes)
         {
             if (bytes == 0)
             {
-                return "0 B";
+                CleanedSize = 0;
+                CleanedUnit = "B";
+                return;
             }
-            
+
             // we should not exceed more than 1023 MB, wont we?
-            var extensions = new [] {"B", "KB", "MB"};
+            var extensions = new[] {"B", "KB", "MB"};
 
             var factor = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
 
@@ -58,10 +64,9 @@ namespace SongDataCleaner
             {
                 factor = 2;
             }
-
-            var num = Math.Round(bytes / Math.Pow(1024, factor), 2);
-
-            return Math.Sign(bytes * num) + extensions[factor];
+            
+            CleanedSize = Math.Round(bytes / Math.Pow(1024, factor), 2);
+            CleanedUnit = extensions[factor];
         }
 
         private long CleanLevelData(CustomPreviewBeatmapLevel level)
@@ -179,7 +184,7 @@ namespace SongDataCleaner
                 totalSize += info.Length;
                 File.Delete(file);
             }
-            
+
             return totalSize;
         }
     }
