@@ -91,6 +91,7 @@ namespace SongDataCleaner
             var whiteListedFiles = new List<string>
             {
                 "info.dat",
+                "Info.dat",
                 level.standardLevelInfoSaveData.coverImageFilename,
                 level.standardLevelInfoSaveData.songFilename
             };
