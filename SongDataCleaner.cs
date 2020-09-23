@@ -13,21 +13,28 @@ namespace SongDataCleaner
     {
         private static IPA.Logging.Logger Log => Plugin.Log;
 
-        internal static double CleanedSize;
-        internal static string CleanedUnit;
+        internal static double CleanedSize { get; set; }
+        internal static string CleanedUnit { get; set; }
 
         internal void Run(IEnumerable<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
         {
+            ResetCleanData();
             StartCoroutine(InternalRun(levels, showProgressBar));
+        }
+
+        internal static void ResetCleanData()
+        {
+            Log.Info("resetting clean data...");
+            CleanedSize = 0;
+            CleanedUnit = "B";
         }
 
         private IEnumerator InternalRun(IEnumerable<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
         {
             yield return new WaitUntil(() => Loader.AreSongsLoaded);
 
-            CleanedSize = 0;
-            CleanedUnit = "B";
-            
+            ResetCleanData();
+
             try
             {
                 var size = levels.Sum(CleanLevelData);
@@ -64,7 +71,7 @@ namespace SongDataCleaner
             {
                 factor = 2;
             }
-            
+
             CleanedSize = Math.Round(bytes / Math.Pow(1024, factor), 2);
             CleanedUnit = extensions[factor];
         }
