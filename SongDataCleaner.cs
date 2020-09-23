@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SongCore;
-using SongCore.Data;
 using UnityEngine;
 
 namespace SongDataCleaner
@@ -96,8 +95,8 @@ namespace SongDataCleaner
                 level.standardLevelInfoSaveData.songFilename
             };
 
-
-            // bug :: contributors not loaded
+            //RepairSongFileExtension(Path.Combine(level.customLevelPath, level.standardLevelInfoSaveData.coverImageFilename));
+            
             var levelHash = level.levelID.Replace("custom_level_", "");
             var extraSongData = Collections.RetrieveExtraSongData(levelHash);
             if (extraSongData == null)
@@ -136,6 +135,29 @@ namespace SongDataCleaner
 
             return CleanByFileList(whiteListedFiles, entries, ignoreImages);
         }
+
+        /*
+        private void RepairSongFileExtension(string songFile)
+        {
+            if (File.Exists(songFile))
+            {
+                return;
+            }
+
+            var fileWithoutEnding = songFile.Substring(0, -3);
+            var actualExtension = songFile.Substring(-3).ToLowerInvariant();
+            
+            switch (actualExtension)
+            {
+                case "ogg" when File.Exists(fileWithoutEnding + "egg"):
+                    File.Move(songFile, fileWithoutEnding + "egg");
+                    return;
+                case "egg" when File.Exists(fileWithoutEnding + "ogg"):
+                    File.Move(songFile, fileWithoutEnding + "ogg");
+                    break;
+            }
+        }
+        */
 
         private List<string> GetCompleteFileList(string directory)
         {
