@@ -14,6 +14,8 @@ namespace SongDataCleaner
 
         internal static double CleanedSize { get; set; }
         internal static string CleanedUnit { get; set; }
+        
+        internal static bool IsInCleanerRun { get; set; }
 
         internal void Run(IEnumerable<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
         {
@@ -23,24 +25,28 @@ namespace SongDataCleaner
 
         internal static void ResetCleanData()
         {
-            Log.Info("resetting clean data...");
+            //Log.Debug("resetting clean data...");
             CleanedSize = 0;
             CleanedUnit = "B";
         }
 
         private IEnumerator InternalRun(IEnumerable<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
         {
+            yield return new WaitUntil(() => !Loader.AreSongsLoading);
             yield return new WaitUntil(() => Loader.AreSongsLoaded);
 
             ResetCleanData();
 
             try
             {
+                IsInCleanerRun = true;
                 var size = levels.Sum(CleanLevelData);
+                
                 Log.Info($"cleaned {size} bytes");
 
                 SetHumanReadableFileSize(size);
 
+                IsInCleanerRun = false;
                 if (showProgressBar)
                 {
                     PluginUI.instance.ShowProgress();
@@ -61,7 +67,7 @@ namespace SongDataCleaner
                 return;
             }
 
-            // we should not exceed more than 1023 MB, wont we?
+            // we should not exceed more than a few hundred MB, wont we?
             var extensions = new[] {"B", "KB", "MB"};
 
             var factor = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
@@ -126,7 +132,7 @@ namespace SongDataCleaner
                 return 0;
             }
 
-            Log.Info($"level has possible unused files; ignoreImages = {ignoreImages} | {shortPath} ");
+            Log.Debug($"level has possible unused files; ignoreImages = {ignoreImages} | {shortPath} ");
 
             for (var i = 0; i < whiteListedFiles.Count; i++)
             {
@@ -203,7 +209,7 @@ namespace SongDataCleaner
                 if (ignoreImages)
                 {
                     var extension = info.Extension.Substring(1).ToLowerInvariant();
-                    Log.Debug($"extension is {extension}");
+                    //Log.Debug($"extension is {extension}");
                     if (extension == "png" || extension == "jpg" || extension == "jpeg")
                     {
                         Log.Warn("----> file is an image but image skip is set");

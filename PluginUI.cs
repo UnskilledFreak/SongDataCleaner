@@ -9,7 +9,6 @@ namespace SongDataCleaner
     {
         private static ProgressBar _progressBar;
         private MenuButton _menuButton;
-        private bool _fromButton;
         private const int MessageTime = 5;
 
         internal void Setup()
@@ -21,7 +20,6 @@ namespace SongDataCleaner
 
         private void RefreshButtonPressed()
         {
-            _fromButton = true;
             StartCoroutine(Refresh());
         }
 
@@ -42,6 +40,7 @@ namespace SongDataCleaner
             }
             
             yield return new WaitUntil(() => Loader.AreSongsLoaded);
+            yield return new WaitUntil(() => !SongDataCleaner.IsInCleanerRun);
 
             if (SongDataCleaner.CleanedSize == 0)
             {
@@ -49,8 +48,8 @@ namespace SongDataCleaner
                 yield break;
             }
             
-            // wait for SongCores message to prevent mixing with PlaylistLoaderLite and other mods 
-            yield return new WaitForSeconds(_fromButton ? 5f : 15f);
+            // some small time buffer to prevent text confusion with song data load result
+            yield return new WaitForSeconds(3f);
             ShowProgress();
         }
 
@@ -58,7 +57,6 @@ namespace SongDataCleaner
         {
             _progressBar.enabled = true;
             _progressBar.ShowMessage($"{SongDataCleaner.CleanedSize} {SongDataCleaner.CleanedUnit} cleaned", MessageTime);
-            _fromButton = false;
         }
     }
 }
