@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SongDataCleaner")]
-[assembly: AssemblyDescription("Cleaning mod for custom dong data")]
+[assembly: AssemblyDescription("Cleaning mod for custom song data")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("SongDataCleaner")]
