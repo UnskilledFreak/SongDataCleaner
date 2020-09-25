@@ -110,7 +110,10 @@ namespace SongDataCleaner
                 "info.dat",
                 "Info.dat",
                 level.standardLevelInfoSaveData.coverImageFilename,
-                level.standardLevelInfoSaveData.songFilename
+                level.standardLevelInfoSaveData.songFilename,
+                // BeatSinger
+                "lyrics.srt",
+                "lyrics.json",
             };
 
             //RepairSongFileExtension(Path.Combine(level.customLevelPath, level.standardLevelInfoSaveData.coverImageFilename));
