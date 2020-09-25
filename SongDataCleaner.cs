@@ -114,6 +114,8 @@ namespace SongDataCleaner
                 // BeatSinger
                 "lyrics.srt",
                 "lyrics.json",
+                // MusicVideoPlayer
+                "video.json"
             };
 
             //RepairSongFileExtension(Path.Combine(level.customLevelPath, level.standardLevelInfoSaveData.coverImageFilename));
