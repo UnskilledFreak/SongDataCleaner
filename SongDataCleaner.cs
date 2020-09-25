@@ -107,6 +107,7 @@ namespace SongDataCleaner
 
             var whiteListedFiles = new List<string>
             {
+                // standard data
                 "info.dat",
                 "Info.dat",
                 level.standardLevelInfoSaveData.coverImageFilename,
@@ -115,7 +116,9 @@ namespace SongDataCleaner
                 "lyrics.srt",
                 "lyrics.json",
                 // MusicVideoPlayer
-                "video.json"
+                "video.json",
+                // GameSaber
+                "GameParams.json"
             };
 
             //RepairSongFileExtension(Path.Combine(level.customLevelPath, level.standardLevelInfoSaveData.coverImageFilename));
