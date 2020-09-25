@@ -8,20 +8,22 @@ namespace SongDataCleaner
     public class PluginUI : PersistentSingleton<PluginUI>
     {
         private static ProgressBar _progressBar;
-        private MenuButton _menuButton;
+        //private MenuButton _menuButton;
         private const int MessageTime = 5;
 
         internal void Setup()
         {
-            _menuButton = new MenuButton("Clean Song Data", "Forces refreshing of all Songs & Playlists and cleans song data folders", RefreshButtonPressed);
-            MenuButtons.instance.RegisterButton(_menuButton);
+            //_menuButton = new MenuButton("Clean Song Data", "Forces refreshing of all Songs & Playlists and cleans song data folders", RefreshButtonPressed);
+            //MenuButtons.instance.RegisterButton(_menuButton);
             StartCoroutine(InternalSetup());
         }
 
+        /*
         private void RefreshButtonPressed()
         {
             StartCoroutine(Refresh());
         }
+        */
 
         private IEnumerator InternalSetup()
         {
