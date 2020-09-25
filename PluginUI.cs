@@ -44,17 +44,16 @@ namespace SongDataCleaner
 
             if (SongDataCleaner.CleanedSize == 0)
             {
-                Plugin.Log.Info("nothing cleaned, disabled display of progress bar");
+                Plugin.Log.Debug("nothing cleaned, disabled display of progress bar");
                 yield break;
             }
             
-            // some small time buffer to prevent text confusion with song data load result
-            yield return new WaitForSeconds(3f);
-            ShowProgress();
+            StartCoroutine(ShowProgress());
         }
 
-        public void ShowProgress()
+        public IEnumerator ShowProgress()
         {
+            yield return new WaitForSeconds(5f);
             _progressBar.enabled = true;
             _progressBar.ShowMessage($"{SongDataCleaner.CleanedSize} {SongDataCleaner.CleanedUnit} cleaned", MessageTime);
         }

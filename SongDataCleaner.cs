@@ -32,29 +32,41 @@ namespace SongDataCleaner
 
         private IEnumerator InternalRun(IEnumerable<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
         {
+            //Log.Debug("internal run!!!");
             yield return new WaitUntil(() => !Loader.AreSongsLoading);
             yield return new WaitUntil(() => Loader.AreSongsLoaded);
 
             ResetCleanData();
 
+            if (IsInCleanerRun)
+            {
+                Log.Error("InternalRun get triggered but inRun is set");
+                yield break;
+            }
+
             try
             {
+                Log.Debug("locking cleaner");
                 IsInCleanerRun = true;
                 var size = levels.Sum(CleanLevelData);
-                
+
                 Log.Info($"cleaned {size} bytes");
 
                 SetHumanReadableFileSize(size);
 
-                IsInCleanerRun = false;
                 if (showProgressBar)
                 {
-                    PluginUI.instance.ShowProgress();
+                    StartCoroutine(PluginUI.instance.ShowProgress());
                 }
             }
             catch (Exception e)
             {
                 Log.Error(e);
+            }
+            finally
+            {
+                Log.Debug("unlocking cleaner");
+                IsInCleanerRun = false;
             }
         }
 
@@ -132,7 +144,7 @@ namespace SongDataCleaner
                 return 0;
             }
 
-            Log.Debug($"level has possible unused files; ignoreImages = {ignoreImages} | {shortPath} ");
+            //Log.Debug($"level has possible unused files; ignoreImages = {ignoreImages} | {shortPath} ");
 
             for (var i = 0; i < whiteListedFiles.Count; i++)
             {

@@ -15,8 +15,6 @@ namespace SongDataCleaner
         
         private static SongDataCleaner _songDataCleaner;
         private static string Name => "SongDataCleaner";
-        
-        private static bool _didRun;
 
         [Init]
         public void Init(IPALogger logger)
@@ -64,12 +62,11 @@ namespace SongDataCleaner
 
         private void OnSongsLoaded(Loader loader, Dictionary<string, CustomPreviewBeatmapLevel> levelDictionary)
         {
-            if (_didRun || Loader.AreSongsLoading)
+            if (Loader.AreSongsLoading)
             {
                 return;
             }
 
-            _didRun = true;
             Log.Info("SongCore finished loading, cleaning infos");
             _songDataCleaner.Run(levelDictionary.Values.ToList());
         }
