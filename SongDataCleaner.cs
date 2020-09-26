@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using SongCore;
+using SongDataCleaner.Models;
 using UnityEngine;
 
 namespace SongDataCleaner
@@ -93,6 +95,36 @@ namespace SongDataCleaner
             CleanedUnit = extensions[factor];
         }
 
+        private void AddIfExists(List<string> whiteListedFiles, CustomPreviewBeatmapLevel level, string file, Func<string, List<string>> callbackOnFound = null)
+        {
+            // this check is necessary for performance on comparing file lists
+            var path = Path.Combine(level.customLevelPath, file);
+            if (!File.Exists(path))
+            {
+                return;
+            }
+            
+            whiteListedFiles.Add(file);
+            
+            if (callbackOnFound != null)
+            {
+                whiteListedFiles.AddRange(callbackOnFound.Invoke(path));
+            }
+        }
+
+        private List<string> HandleMusicVideoData(string videoDataFile)
+        {
+            var returnList = new List<string>();
+            var videoData = JsonConvert.DeserializeObject<VideoDatas>(File.ReadAllText(videoDataFile));
+
+            if (videoData.videos.Any())
+            {
+                returnList.AddRange(videoData.videos.Select(data => data.videoPath));
+            }
+            
+            return returnList;
+        }
+
         private long CleanLevelData(CustomPreviewBeatmapLevel level)
         {
             if (level == null)
@@ -105,21 +137,20 @@ namespace SongDataCleaner
             var shortPath = level.customLevelPath.Substring(level.customLevelPath.LastIndexOf("\\") + 1);
             //Log.Debug($"Cleaning {shortPath}");
 
-            var whiteListedFiles = new List<string>
-            {
-                // standard data
-                "info.dat",
-                "Info.dat",
-                level.standardLevelInfoSaveData.coverImageFilename,
-                level.standardLevelInfoSaveData.songFilename,
-                // BeatSinger
-                "lyrics.srt",
-                "lyrics.json",
-                // MusicVideoPlayer
-                "video.json",
-                // GameSaber
-                "GameParams.json"
-            };
+            // standard data
+            var whiteListedFiles = new List<string>();
+            
+            AddIfExists(whiteListedFiles, level, "info.dat");
+            AddIfExists(whiteListedFiles, level, "Info.dat");
+            AddIfExists(whiteListedFiles, level, level.standardLevelInfoSaveData.coverImageFilename); // uhm, why should it not exist?
+            AddIfExists(whiteListedFiles, level, level.standardLevelInfoSaveData.songFilename);
+            // BeatSinger
+            AddIfExists(whiteListedFiles, level, "lyrics.srt");
+            AddIfExists(whiteListedFiles, level, "lyrics.json");
+            // MusicVideoPlayer
+            AddIfExists(whiteListedFiles, level, "video.json", HandleMusicVideoData);
+            // GameSaber
+            AddIfExists(whiteListedFiles, level, "GameParams.json");
 
             //RepairSongFileExtension(Path.Combine(level.customLevelPath, level.standardLevelInfoSaveData.coverImageFilename));
             
