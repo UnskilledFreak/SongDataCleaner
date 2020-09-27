@@ -104,6 +104,7 @@ namespace SongDataCleaner
                 return;
             }
             
+            Log.Debug($"found {file}");
             whiteListedFiles.Add(file);
             
             if (callbackOnFound != null)
@@ -114,14 +115,29 @@ namespace SongDataCleaner
 
         private List<string> HandleMusicVideoData(string videoDataFile)
         {
-            var returnList = new List<string>();
-            var videoData = JsonConvert.DeserializeObject<VideoDatas>(File.ReadAllText(videoDataFile));
-
-            if (videoData.videos.Any())
-            {
-                returnList.AddRange(videoData.videos.Select(data => data.videoPath));
-            }
+            Log.Debug(videoDataFile);
             
+            var returnList = new List<string>();
+            var fileData = File.ReadAllText(videoDataFile);
+            
+            if (fileData.Substring(0,1) == "[")
+            {
+                var video = JsonConvert.DeserializeObject<VideoDatas.VideoData>(fileData);
+                if (!string.IsNullOrWhiteSpace(video.videoPath))
+                {
+                    returnList.Add(video.videoPath);
+                }
+            }
+            else
+            {
+                var videoData = JsonConvert.DeserializeObject<VideoDatas>(fileData);
+
+                if (videoData.videos.Any())
+                {
+                    returnList.AddRange(videoData.videos.Select(data => data.videoPath));
+                }
+            }
+
             return returnList;
         }
 
