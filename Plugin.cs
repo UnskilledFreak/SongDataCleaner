@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using BS_Utils.Utilities;
 using IPA;
 using SongCore;
 using UnityEngine;
@@ -12,8 +11,8 @@ namespace SongDataCleaner
     public class Plugin
     {
         internal static IPALogger Log { get; private set; }
-        
         private static SongDataCleaner _songDataCleaner;
+        private static bool _firstRunDone;
         private static string Name => "SongDataCleaner";
 
         [Init]
@@ -26,14 +25,12 @@ namespace SongDataCleaner
         [OnStart]
         public void OnStart()
         {
-            BSEvents.OnLoad();
             _songDataCleaner = new GameObject(Name).AddComponent<SongDataCleaner>();
         }
 
         [OnEnable]
         public void Enable()
         {
-            BSEvents.levelSelected += OnLevelSelected;
             Loader.SongsLoadedEvent += OnSongsLoaded;
             PluginUI.instance.Setup();
         }
@@ -42,31 +39,18 @@ namespace SongDataCleaner
         [OnExit]
         public void Disable()
         {
-            BSEvents.levelSelected -= OnLevelSelected;
             Loader.SongsLoadedEvent -= OnSongsLoaded;
-        }
-        
-        private void OnLevelSelected(LevelCollectionViewController levelCollectionViewController, IPreviewBeatmapLevel previewBeatmapLevel)
-        {
-            if (Loader.AreSongsLoading)
-            {
-                return;
-            }
-            
-            _songDataCleaner.Run(new List<CustomPreviewBeatmapLevel>
-            {
-                previewBeatmapLevel as CustomPreviewBeatmapLevel
-            }, false);
         }
 
 
         private void OnSongsLoaded(Loader loader, Dictionary<string, CustomPreviewBeatmapLevel> levelDictionary)
         {
-            if (Loader.AreSongsLoading)
+            if (!_firstRunDone)
             {
+                _firstRunDone = true;
                 return;
             }
-
+            
             Log.Info("SongCore finished loading, cleaning infos");
             _songDataCleaner.Run(levelDictionary.Values.ToList());
         }

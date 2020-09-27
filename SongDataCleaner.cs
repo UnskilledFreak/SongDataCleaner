@@ -3,23 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 using SongCore;
-using SongDataCleaner.Models;
 using UnityEngine;
 
 namespace SongDataCleaner
 {
-    public class SongDataCleaner : PersistentSingleton<SongDataCleaner>
+    public partial class SongDataCleaner : PersistentSingleton<SongDataCleaner>
     {
         private static IPA.Logging.Logger Log => Plugin.Log;
 
         internal static double CleanedSize { get; set; }
         internal static string CleanedUnit { get; set; }
-        
+
         internal static bool IsInCleanerRun { get; set; }
 
-        internal void Run(IEnumerable<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
+        internal void Run(List<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
         {
             ResetCleanData();
             StartCoroutine(InternalRun(levels, showProgressBar));
@@ -32,10 +30,11 @@ namespace SongDataCleaner
             CleanedUnit = "B";
         }
 
-        private IEnumerator InternalRun(IEnumerable<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
+        private IEnumerator InternalRun(List<CustomPreviewBeatmapLevel> levels, bool showProgressBar = true)
         {
-            //Log.Debug("internal run!!!");
-            yield return new WaitUntil(() => !Loader.AreSongsLoading);
+            Log.Debug($"called internal run for {levels.Count} levels");
+
+            //yield return new WaitUntil(() => !Loader.AreSongsLoading);
             yield return new WaitUntil(() => Loader.AreSongsLoaded);
 
             ResetCleanData();
@@ -95,7 +94,7 @@ namespace SongDataCleaner
             CleanedUnit = extensions[factor];
         }
 
-        private void AddIfExists(List<string> whiteListedFiles, CustomPreviewBeatmapLevel level, string file, Func<string, List<string>> callbackOnFound = null)
+        private void AddIfExists(List<string> whiteListedFiles, CustomPreviewBeatmapLevel level, string file, Func<CustomPreviewBeatmapLevel, string, List<string>> callbackOnFound = null)
         {
             // this check is necessary for performance on comparing file lists
             var path = Path.Combine(level.customLevelPath, file);
@@ -103,42 +102,14 @@ namespace SongDataCleaner
             {
                 return;
             }
-            
-            Log.Debug($"found {file}");
+
+            //Log.Debug($"found {file}");
             whiteListedFiles.Add(file);
-            
+
             if (callbackOnFound != null)
             {
-                whiteListedFiles.AddRange(callbackOnFound.Invoke(path));
+                whiteListedFiles.AddRange(callbackOnFound.Invoke(level, path));
             }
-        }
-
-        private List<string> HandleMusicVideoData(string videoDataFile)
-        {
-            Log.Debug(videoDataFile);
-            
-            var returnList = new List<string>();
-            var fileData = File.ReadAllText(videoDataFile);
-            
-            if (fileData.Substring(0,1) == "[")
-            {
-                var video = JsonConvert.DeserializeObject<VideoDatas.VideoData>(fileData);
-                if (!string.IsNullOrWhiteSpace(video.videoPath))
-                {
-                    returnList.Add(video.videoPath);
-                }
-            }
-            else
-            {
-                var videoData = JsonConvert.DeserializeObject<VideoDatas>(fileData);
-
-                if (videoData.videos.Any())
-                {
-                    returnList.AddRange(videoData.videos.Select(data => data.videoPath));
-                }
-            }
-
-            return returnList;
         }
 
         private long CleanLevelData(CustomPreviewBeatmapLevel level)
@@ -153,9 +124,9 @@ namespace SongDataCleaner
             var shortPath = level.customLevelPath.Substring(level.customLevelPath.LastIndexOf("\\") + 1);
             //Log.Debug($"Cleaning {shortPath}");
 
-            // standard data
             var whiteListedFiles = new List<string>();
-            
+
+            // standard data
             AddIfExists(whiteListedFiles, level, "info.dat");
             AddIfExists(whiteListedFiles, level, "Info.dat");
             AddIfExists(whiteListedFiles, level, level.standardLevelInfoSaveData.coverImageFilename); // uhm, why should it not exist?
@@ -168,8 +139,6 @@ namespace SongDataCleaner
             // GameSaber
             AddIfExists(whiteListedFiles, level, "GameParams.json");
 
-            //RepairSongFileExtension(Path.Combine(level.customLevelPath, level.standardLevelInfoSaveData.coverImageFilename));
-            
             var levelHash = level.levelID.Replace("custom_level_", "");
             var extraSongData = Collections.RetrieveExtraSongData(levelHash);
             if (extraSongData == null)
@@ -208,29 +177,6 @@ namespace SongDataCleaner
 
             return CleanByFileList(whiteListedFiles, entries, ignoreImages);
         }
-
-        /*
-        private void RepairSongFileExtension(string songFile)
-        {
-            if (File.Exists(songFile))
-            {
-                return;
-            }
-
-            var fileWithoutEnding = songFile.Substring(0, -3);
-            var actualExtension = songFile.Substring(-3).ToLowerInvariant();
-            
-            switch (actualExtension)
-            {
-                case "ogg" when File.Exists(fileWithoutEnding + "egg"):
-                    File.Move(songFile, fileWithoutEnding + "egg");
-                    return;
-                case "egg" when File.Exists(fileWithoutEnding + "ogg"):
-                    File.Move(songFile, fileWithoutEnding + "ogg");
-                    break;
-            }
-        }
-        */
 
         private List<string> GetCompleteFileList(string directory)
         {
@@ -285,7 +231,7 @@ namespace SongDataCleaner
                 }
 
                 totalSize += info.Length;
-                File.Delete(file);
+                //File.Delete(file);
             }
 
             return totalSize;

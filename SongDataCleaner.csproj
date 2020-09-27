@@ -94,6 +94,7 @@
         <Compile Include="PluginUI.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="SongDataCleaner.cs" />
+        <Compile Include="SongDataCleaner.VideoData.cs" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="manifest.json" />
