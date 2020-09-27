@@ -231,7 +231,7 @@ namespace SongDataCleaner
                 }
 
                 totalSize += info.Length;
-                //File.Delete(file);
+                File.Delete(file);
             }
 
             return totalSize;
