@@ -41,7 +41,7 @@ namespace SongDataCleaner
 
             if (IsInCleanerRun)
             {
-                Log.Error("InternalRun get triggered but inRun is set");
+                Log.Debug("InternalRun get triggered but inRun is set");
                 yield break;
             }
 
@@ -143,7 +143,7 @@ namespace SongDataCleaner
             var extraSongData = Collections.RetrieveExtraSongData(levelHash);
             if (extraSongData == null)
             {
-                Log.Warn($"could not get extra song data for level {levelHash} - setting ignore image flag | {shortPath}");
+                Log.Debug($"could not get extra song data for level {levelHash} - setting ignore image flag | {shortPath}");
                 ignoreImages = true;
             }
             else
@@ -225,7 +225,7 @@ namespace SongDataCleaner
                     //Log.Debug($"extension is {extension}");
                     if (extension == "png" || extension == "jpg" || extension == "jpeg")
                     {
-                        Log.Warn("----> file is an image but image skip is set");
+                        Log.Debug("----> file is an image but image skip is set");
                         continue;
                     }
                 }

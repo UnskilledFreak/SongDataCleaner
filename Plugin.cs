@@ -51,7 +51,7 @@ namespace SongDataCleaner
                 return;
             }
             
-            Log.Info("SongCore finished loading, cleaning infos");
+            //Log.Info("SongCore finished loading, cleaning infos");
             _songDataCleaner.Run(levelDictionary.Values.ToList());
         }
     }
